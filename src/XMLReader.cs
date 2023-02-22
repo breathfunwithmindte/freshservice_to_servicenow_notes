@@ -53,11 +53,19 @@ namespace freshservice_to_servicenow_notes.src
 
     public void writeToJsonFile(string fileName)
     {
-        string json = JsonConvert.SerializeObject(this.items);
-        using (StreamWriter writer = new StreamWriter(this.buildDirectory + fileName + ".json"))
-        {
-            writer.Write(json);
-        }
+      using (var fileStream = new FileStream(this.buildDirectory + fileName + ".json", FileMode.Create))
+      {
+          using (var streamWriter = new StreamWriter(fileStream))
+          {
+              using (var jsonWriter = new JsonTextWriter(streamWriter))
+              {
+                  var serializer = new JsonSerializer();
+                  serializer.Serialize(jsonWriter, this.items);
+                  jsonWriter.Flush();
+              }
+          }
+      }
+
     }
 
 

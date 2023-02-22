@@ -45,20 +45,35 @@ namespace freshservice_to_servicenow_notes.src
     /// <param name="fileName"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public void ReadJson <N> (string fileName) where N : ParserItem<T>, new ()
+    public void ReadJson<N>(string fileName) where N : ParserItem<T>, new()
     {
-        string json = File.ReadAllText(this.buildDirectory + fileName + ".json");
-        JArray jsonArray = JArray.Parse(json);
-
-        foreach (JObject item in jsonArray)
+        using (var fileStream = new FileStream(this.buildDirectory + fileName + ".json", FileMode.Open))
         {
-            N note = new N();
-            note.Run(item, this.notes);
-            
+            using (var streamReader = new StreamReader(fileStream))
+            {
+                using (var jsonReader = new JsonTextReader(streamReader))
+                {
+                    var serializer = new JsonSerializer();
+                    JArray? jsonArray = serializer.Deserialize<JArray>(jsonReader);
+
+                    if(jsonArray == null)
+                    {
+                      Console.WriteLine("JSON IS NOT ARRAY TYPE.");
+                      return;
+                    }
+
+                    foreach (JObject item in jsonArray)
+                    {
+                        N note = new N();
+                        note.Run(item, this.notes);
+                    }
+
+                    string notesJson = JsonConvert.SerializeObject(this.notes);
+                    File.WriteAllText(this.buildDirectory + fileName + ".min.json", notesJson);
+                    Console.WriteLine(this.notes.Count());
+                }
+            }
         }
-        string notesJson = JsonConvert.SerializeObject(this.notes);
-        File.WriteAllText(this.buildDirectory + fileName + ".min.json", notesJson);
-        Console.WriteLine(this.notes.Count());
     }
 
 
