@@ -24,6 +24,20 @@ namespace freshservice_to_servicenow_notes.src.types
       var display_id = obj["helpdesk-ticket"]?["display-id"]?["#text"]?.ToString();
       JToken? helpdeskNoteToken = obj["helpdesk-ticket"]?["helpdesk-notes"]?["helpdesk-note"];
 
+      if (helpdeskNoteToken is JArray helpdeskNotes)
+      {
+          foreach (var helpdeskNote in helpdeskNotes)
+          {
+              // Access helpdeskNote properties here
+              Console.WriteLine("msaidjiasjdisjad");
+              Console.WriteLine(helpdeskNote);
+          }
+      }
+      else
+      {
+          // Handle case where helpdesk-note is not an array
+      }
+
       string mails = this.GetCCEmail(obj["helpdesk-ticket"]?["cc-email"], obj["helpdesk-ticket"]?["to-email"]?.ToString());
 
       if (parent_id == null || parent_user_id == null || parent_body == null || display_id == null)

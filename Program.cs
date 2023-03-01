@@ -23,7 +23,7 @@ namespace freshservice_to_servicenow_notes
         switch (commandProp)
         {
           case "json":
-            xmlReader.parseToSingleList(1);
+            xmlReader.parseToSingleList(2);
             xmlReader.writeToJsonFile("primary");
             //xmlReader.logInstance();
             break;

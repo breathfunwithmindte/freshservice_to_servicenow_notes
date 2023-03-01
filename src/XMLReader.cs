@@ -30,8 +30,11 @@ namespace freshservice_to_servicenow_notes.src
         {
           limiter = this.xmlFileNames.Count();
         }
+        int index = 0;
         foreach (string file in this.xmlFileNames.Take(limiter))
         {
+            index++;
+            Console.WriteLine("Counter = " + index.ToString() + " filename = " + file);
             using (StreamReader reader = new StreamReader(file))
             {
               XDocument doc = XDocument.Load(reader);
@@ -51,22 +54,11 @@ namespace freshservice_to_servicenow_notes.src
         Console.WriteLine(this.items.Count());
     }
 
-    public void writeToJsonFile(string fileName)
-    {
-      using (var fileStream = new FileStream(this.buildDirectory + fileName + ".json", FileMode.Create))
-      {
-          using (var streamWriter = new StreamWriter(fileStream))
-          {
-              using (var jsonWriter = new JsonTextWriter(streamWriter))
-              {
-                  var serializer = new JsonSerializer();
-                  serializer.Serialize(jsonWriter, this.items);
-                  jsonWriter.Flush();
-              }
-          }
-      }
-
-    }
+public void writeToJsonFile(string fileName)
+{
+  string jsonText = JsonConvert.SerializeObject(this.items);
+  File.WriteAllText(this.buildDirectory + fileName + ".json", jsonText);
+}
 
 
     public void logInstance ()

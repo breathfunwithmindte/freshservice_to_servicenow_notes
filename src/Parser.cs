@@ -64,16 +64,30 @@ namespace freshservice_to_servicenow_notes.src
 
                     foreach (JObject item in jsonArray)
                     {
+                      if(item["helpdesk-ticket"] == null) {
+                        Console.WriteLine("\n\nNONONO HELPDESK TICKET\n\n\n");
+                      } else {
                         N note = new N();
                         note.Run(item, this.notes);
+                      }
                     }
 
-                    string notesJson = JsonConvert.SerializeObject(this.notes);
-                    File.WriteAllText(this.buildDirectory + fileName + ".min.json", notesJson);
+                    
                     Console.WriteLine(this.notes.Count());
                 }
             }
         }
+
+        using (var fileStream = new FileStream(this.buildDirectory + fileName + ".min.json", FileMode.Create))
+        {
+            using (var streamWriter = new StreamWriter(fileStream))
+            {
+                var serializer = new JsonSerializer();
+                serializer.Serialize(streamWriter, this.notes);
+            }
+        }
+
+        Console.WriteLine(this.notes.Count());
     }
 
 
